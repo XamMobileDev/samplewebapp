@@ -3,19 +3,28 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>WebView Communication (iOS 18+ Fix)</title>
+    <title>iOS 18+ WebView Fix</title>
 </head>
 <body>
-    <h1>WebView Communication (iOS 18+ issue Fix)</h1>
+    <h1>WebView Communication (iOS 18+)</h1>
     <button onclick="sendMessageToFlutter()">Send to Flutter</button>
     <p id="status">Waiting for messages...</p>
 
     <script>
+        let messagePort;
+        
+        // ✅ Setup WebMessagePort to receive messages
+        window.addEventListener("message", (event) => {
+            if (event.data === "Hello from Flutter!") {
+                document.getElementById("status").innerText = "🔥 Received: " + event.data;
+            }
+        });
+
         function sendMessageToFlutter() {
             if (window.flutter_inappwebview) {
                 setTimeout(() => {
-                    window.flutter_inappwebview.callHandler("messageFromWeb", "Hello from Web!");
-                }, 100); // Delay execution to ensure WebView loads
+                    window.flutter_inappwebview.postMessage("Hello from Web!");
+                }, 100);
             }
         }
 
