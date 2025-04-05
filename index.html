@@ -1,36 +1,23 @@
 <!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>iOS 18+ WebView Fix</title>
-</head>
-<body>
-    <h1>WebView Communication (iOS 18+)</h1>
-    <button onclick="sendMessageToFlutter()">Send to Flutter</button>
-    <p id="status">Waiting for messages...</p>
-
+<html>
+  <head>
+    <title>WebView Demo</title>
     <script>
-        let messagePort;
-        
-        // ✅ Setup WebMessagePort to receive messages
-        window.addEventListener("message", (event) => {
-            if (event.data === "Hello from Flutter!") {
-                document.getElementById("status").innerText = "🔥 Received: " + event.data;
-            }
-        });
+      // Listen for messages from native iOS
+      window.addEventListener("message", function (event) {
+        document.getElementById("from-native").textContent = event.data;
+      });
 
-        function sendMessageToFlutter() {
-            if (window.flutter_inappwebview) {
-                setTimeout(() => {
-                    window.flutter_inappwebview.postMessage("Hello from Web!");
-                }, 100);
-            }
-        }
-
-        function receiveMessageFromFlutter(message) {
-            document.getElementById("status").innerText = "Received: " + message;
-        }
+      // Send message to native iOS
+      function sendToNative() {
+        const message = { fromWeb: "Hello from WebView!" };
+        window.webkit.messageHandlers.iosListener.postMessage(message);
+      }
     </script>
-</body>
+  </head>
+  <body>
+    <h2>Web App</h2>
+    <p id="from-native">Waiting for data from native app...</p>
+    <button onclick="sendToNative()">Send Message to iOS</button>
+  </body>
 </html>
